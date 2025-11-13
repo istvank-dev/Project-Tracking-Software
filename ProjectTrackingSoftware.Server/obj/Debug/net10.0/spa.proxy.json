@@ -1,0 +1,10 @@
+{
+"SpaProxyServer": {
+"ServerUrl": "https://localhost:65223",
+"RedirectUrl": "",
+"LaunchCommand": "npm run dev",
+"WorkingDirectory": "C:\\dev\\project_tracking_software\\ProjectTrackingSoftware.Server\\..\\projecttrackingsoftware.client",
+"MaxTimeoutInSeconds": "120",
+"KeepRunning": "false"
+}
+}
