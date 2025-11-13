@@ -11,8 +11,8 @@ using ProjectTrackingSoftware.Server.Data;
 namespace ProjectTrackingSoftware.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251113134310_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251113160508_InitialSetup")]
+    partial class InitialSetup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

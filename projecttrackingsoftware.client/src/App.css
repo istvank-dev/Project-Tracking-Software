@@ -41,10 +41,16 @@ button {
     transition: background-color 0.2s;
 }
 
-    button:hover:not(:disabled) {
-        opacity: 0.9;
-    }
+button:hover:not(:disabled) {
+    opacity: 0.9;
+}
 
-    button:disabled {
-        cursor: not-allowed;
-    }
+button:disabled {
+    cursor: not-allowed;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    color-scheme: light;
+}
