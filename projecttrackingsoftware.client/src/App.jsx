@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './App.css';
+import Register from './components/Register'; // <-- 1. IMPORT YOUR COMPONENT
 
 function App() {
     const [forecasts, setForecasts] = useState();
@@ -33,12 +34,17 @@ function App() {
 
     return (
         <div>
+            {/* --- Register Section --- */}
+            <Register />
+            <hr />
+            {/* --- End of Register Section --- */}
+
             <h1 id="tableLabel">Weather forecast</h1>
             <p>This component demonstrates fetching data from the server.</p>
             {contents}
         </div>
     );
-    
+
     async function populateWeatherData() {
         const response = await fetch('weatherforecast');
         if (response.ok) {
