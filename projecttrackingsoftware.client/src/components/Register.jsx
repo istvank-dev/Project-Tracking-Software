@@ -1,107 +1,47 @@
+// src/components/Register.jsx
 import { useState } from 'react';
 
-function Register({ onSwitchToLogin }) {
-    const [username, setUsername] = useState('');
+function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
 
         try {
-            const response = await fetch('/api/auth/register', {  // This is correct!
+            const response = await fetch('/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, email, password }),
+                body: JSON.stringify({ email, password }),
             });
 
             if (response.ok) {
-                alert('Registration successful! Please login with your credentials.');
-                onSwitchToLogin();
+                alert('Registration successful!');
+                // TODO: Redirect to login
             } else {
-                const errorData = await response.json();
-                const errorMessage = errorData.errors ?
-                    Object.values(errorData.errors).flat().join(', ') :
-                    errorData.message || 'Registration failed.';
-                alert(`Registration failed: ${errorMessage}`);
+                alert('Registration failed.');
             }
         } catch (error) {
             console.error('Error during registration:', error);
-            alert('An error occurred during registration.');
-        } finally {
-            setIsLoading(false);
+            alert('An error occurred.');
         }
     };
 
     return (
-        <div style={{ maxWidth: '400px', margin: '0 auto' }}>
+        <form onSubmit={handleSubmit}>
             <h2>Register</h2>
-            <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: '1rem' }}>
-                    <label style={{ display: 'block', marginBottom: '0.5rem' }}>Username:</label>
-                    <input
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                        style={{ width: '100%', padding: '0.5rem' }}
-                    />
-                </div>
-                <div style={{ marginBottom: '1rem' }}>
-                    <label style={{ display: 'block', marginBottom: '0.5rem' }}>Email:</label>
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        style={{ width: '100%', padding: '0.5rem' }}
-                    />
-                </div>
-                <div style={{ marginBottom: '1rem' }}>
-                    <label style={{ display: 'block', marginBottom: '0.5rem' }}>Password:</label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        style={{ width: '100%', padding: '0.5rem' }}
-                    />
-                </div>
-                <button
-                    type="submit"
-                    disabled={isLoading}
-                    style={{
-                        width: '100%',
-                        padding: '0.75rem',
-                        backgroundColor: isLoading ? '#ccc' : '#28a745',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px'
-                    }}
-                >
-                    {isLoading ? 'Registering...' : 'Register'}
-                </button>
-            </form>
-            <p style={{ textAlign: 'center', marginTop: '1rem' }}>
-                Already have an account?{' '}
-                <button
-                    onClick={onSwitchToLogin}
-                    style={{
-                        background: 'none',
-                        border: 'none',
-                        color: '#007bff',
-                        cursor: 'pointer',
-                        textDecoration: 'underline'
-                    }}
-                >
-                    Login here
-                </button>
-            </p>
-        </div>
+            <div>
+                <label>Email:</label>
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            </div>
+            <div>
+                <label>Password:</label>
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            </div>
+            <button type="submit">Register</button>
+        </form>
     );
 }
 
