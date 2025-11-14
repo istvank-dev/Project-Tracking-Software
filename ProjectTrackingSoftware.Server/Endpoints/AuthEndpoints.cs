@@ -1,20 +1,21 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ProjectTrackingSoftware.Server.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
+using System.Security.Claims;
+using System.Linq; // Added for the Select and Join extensions
 
 namespace ProjectTrackingSoftware.Server.Endpoints
 {
     public static class AuthEndpoints
     {
-        // This is an extension method for IEndpointRouteBuilder
-        // It allows us to add all our auth-related endpoints in one call
         public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder app)
         {
             var authGroup = app.MapGroup("/api/auth");
 
             // Custom LOGIN endpoint
             authGroup.MapPost("/login", async (
-                SignInManager<IdentityUser> signInManager,
+                [FromServices] SignInManager<ApplicationUser> signInManager,
                 [FromBody] LoginModel model) =>
             {
                 var user = await signInManager.UserManager.FindByEmailAsync(model.Email);
@@ -23,7 +24,8 @@ namespace ProjectTrackingSoftware.Server.Endpoints
                     return Results.Unauthorized();
                 }
 
-                var result = await signInManager.PasswordSignInAsync(user.UserName, model.Password, true, lockoutOnFailure: false);
+                // PasswordSignInAsync uses the user's UserName, so we get it from the user object
+                var result = await signInManager.PasswordSignInAsync(user.UserName!, model.Password, true, lockoutOnFailure: false);
 
                 if (result.Succeeded)
                 {
@@ -34,7 +36,8 @@ namespace ProjectTrackingSoftware.Server.Endpoints
             });
 
             // Custom LOGOUT endpoint
-            authGroup.MapPost("/logout", async (SignInManager<IdentityUser> signInManager) =>
+            authGroup.MapPost("/logout", async (
+                [FromServices] SignInManager<ApplicationUser> signInManager) =>
             {
                 await signInManager.SignOutAsync();
                 return Results.Ok();
@@ -42,27 +45,39 @@ namespace ProjectTrackingSoftware.Server.Endpoints
 
             // Custom REGISTER endpoint
             authGroup.MapPost("/register", async (
-                UserManager<IdentityUser> userManager,
+                [FromServices] UserManager<ApplicationUser> userManager,
                 [FromBody] RegisterModel model) =>
             {
                 if (string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Password) || string.IsNullOrEmpty(model.Username))
                 {
-                    return Results.BadRequest("Username, email and password are required.");
+                    // Return a clean error object for mandatory fields
+                    return Results.BadRequest(new { errors = "Username, email, and password are required." });
                 }
 
-                var user = new IdentityUser { UserName = model.Username, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.Username, Email = model.Email };
                 var result = await userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
                 {
+                    // Optional: You might want to sign in the user immediately here
                     return Results.Ok(new { message = "Registration successful" });
                 }
 
-                return Results.BadRequest(result.Errors);
+                // === CRITICAL FIX START ===
+                // 1. Extract error messages (e.Description) from the IdentityResult.Errors collection.
+                var errorMessages = result.Errors.Select(e => e.Description);
+                // 2. Join them into a single, readable string.
+                var consolidatedError = string.Join(" ", errorMessages);
+
+                // 3. Return a Bad Request with a clear, consolidated error message object.
+                return Results.BadRequest(new { errors = consolidatedError });
+                // === CRITICAL FIX END ===
             });
 
             // Custom endpoint to get user info
-            app.MapGet("/api/user", async (UserManager<IdentityUser> userManager, HttpContext httpContext) =>
+            app.MapGet("/api/user", async (
+                [FromServices] UserManager<ApplicationUser> userManager,
+                HttpContext httpContext) =>
             {
                 if (httpContext.User.Identity?.IsAuthenticated == true)
                 {

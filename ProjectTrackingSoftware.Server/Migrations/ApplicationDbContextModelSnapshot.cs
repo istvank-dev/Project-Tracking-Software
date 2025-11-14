@@ -209,155 +209,6 @@ namespace ProjectTrackingSoftware.Server.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("ProjectTrackingSoftware.Server.Models.KanbanColumn", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("BackgroundColor")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("BoardId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<double>("SortOrder")
-                        .HasColumnType("REAL");
-
-                    b.Property<string>("TextColor")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BoardId");
-
-                    b.ToTable("KanbanColumns");
-                });
-
-            modelBuilder.Entity("ProjectTrackingSoftware.Server.Models.KanbanModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjectId")
-                        .IsUnique();
-
-                    b.ToTable("KanbanBoards");
-                });
-
-            modelBuilder.Entity("ProjectTrackingSoftware.Server.Models.KanbanTicket", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("AssigneeId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("BackgroundColor")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ColumnId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("OwnerUserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<double>("SortOrder")
-                        .HasColumnType("REAL");
-
-                    b.Property<string>("TextColor")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AssigneeId");
-
-                    b.HasIndex("ColumnId");
-
-                    b.HasIndex("OwnerUserId");
-
-                    b.ToTable("KanbanTickets");
-                });
-
-            modelBuilder.Entity("ProjectTrackingSoftware.Server.Models.NoteEntry", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("BackgroundColor")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("NoteModuleId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("OwnerUserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TextColor")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NoteModuleId");
-
-                    b.HasIndex("OwnerUserId");
-
-                    b.ToTable("NoteEntries");
-                });
-
-            modelBuilder.Entity("ProjectTrackingSoftware.Server.Models.NoteModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjectId")
-                        .IsUnique();
-
-                    b.ToTable("NoteModules");
-                });
-
             modelBuilder.Entity("ProjectTrackingSoftware.Server.Models.ProjectMember", b =>
                 {
                     b.Property<int>("ProjectId")
@@ -460,84 +311,6 @@ namespace ProjectTrackingSoftware.Server.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ProjectTrackingSoftware.Server.Models.KanbanColumn", b =>
-                {
-                    b.HasOne("ProjectTrackingSoftware.Server.Models.KanbanModel", "Board")
-                        .WithMany("Columns")
-                        .HasForeignKey("BoardId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Board");
-                });
-
-            modelBuilder.Entity("ProjectTrackingSoftware.Server.Models.KanbanModel", b =>
-                {
-                    b.HasOne("ProjectTrackingSoftware.Server.Models.ProjectModel", "Project")
-                        .WithOne("KanbanBoard")
-                        .HasForeignKey("ProjectTrackingSoftware.Server.Models.KanbanModel", "ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
-                });
-
-            modelBuilder.Entity("ProjectTrackingSoftware.Server.Models.KanbanTicket", b =>
-                {
-                    b.HasOne("ProjectTrackingSoftware.Server.Models.ApplicationUser", "Assignee")
-                        .WithMany()
-                        .HasForeignKey("AssigneeId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("ProjectTrackingSoftware.Server.Models.KanbanColumn", "Column")
-                        .WithMany("Tickets")
-                        .HasForeignKey("ColumnId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProjectTrackingSoftware.Server.Models.ApplicationUser", "Owner")
-                        .WithMany()
-                        .HasForeignKey("OwnerUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Assignee");
-
-                    b.Navigation("Column");
-
-                    b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("ProjectTrackingSoftware.Server.Models.NoteEntry", b =>
-                {
-                    b.HasOne("ProjectTrackingSoftware.Server.Models.NoteModel", "NoteModule")
-                        .WithMany("Notes")
-                        .HasForeignKey("NoteModuleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProjectTrackingSoftware.Server.Models.ApplicationUser", "Owner")
-                        .WithMany()
-                        .HasForeignKey("OwnerUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("NoteModule");
-
-                    b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("ProjectTrackingSoftware.Server.Models.NoteModel", b =>
-                {
-                    b.HasOne("ProjectTrackingSoftware.Server.Models.ProjectModel", "Project")
-                        .WithOne("NoteModule")
-                        .HasForeignKey("ProjectTrackingSoftware.Server.Models.NoteModel", "ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
-                });
-
             modelBuilder.Entity("ProjectTrackingSoftware.Server.Models.ProjectMember", b =>
                 {
                     b.HasOne("ProjectTrackingSoftware.Server.Models.ProjectModel", "Project")
@@ -549,7 +322,7 @@ namespace ProjectTrackingSoftware.Server.Migrations
                     b.HasOne("ProjectTrackingSoftware.Server.Models.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Project");
@@ -562,36 +335,15 @@ namespace ProjectTrackingSoftware.Server.Migrations
                     b.HasOne("ProjectTrackingSoftware.Server.Models.ApplicationUser", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("ProjectTrackingSoftware.Server.Models.KanbanColumn", b =>
-                {
-                    b.Navigation("Tickets");
-                });
-
-            modelBuilder.Entity("ProjectTrackingSoftware.Server.Models.KanbanModel", b =>
-                {
-                    b.Navigation("Columns");
-                });
-
-            modelBuilder.Entity("ProjectTrackingSoftware.Server.Models.NoteModel", b =>
-                {
-                    b.Navigation("Notes");
-                });
-
             modelBuilder.Entity("ProjectTrackingSoftware.Server.Models.ProjectModel", b =>
                 {
-                    b.Navigation("KanbanBoard")
-                        .IsRequired();
-
                     b.Navigation("Members");
-
-                    b.Navigation("NoteModule")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

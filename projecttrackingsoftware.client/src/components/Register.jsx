@@ -1,3 +1,5 @@
+// File: projecttrackingsoftware.client/src/components/Register.jsx
+
 import { useState } from 'react';
 
 function Register({ onSwitchToLogin }) {
@@ -11,22 +13,30 @@ function Register({ onSwitchToLogin }) {
         setIsLoading(true);
 
         try {
-            const response = await fetch('/api/auth/register', {  // This is correct!
+            const response = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ username, email, password }),
+                credentials: 'include', // FIX: Added for cookie consistency
             });
 
             if (response.ok) {
                 alert('Registration successful! Please login with your credentials.');
                 onSwitchToLogin();
             } else {
-                const errorData = await response.json();
-                const errorMessage = errorData.errors ?
-                    Object.values(errorData.errors).flat().join(', ') :
-                    errorData.message || 'Registration failed.';
+                // Safely parse error response to handle unexpected body
+                let errorMessage = 'Registration failed.';
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.errors ?
+                        Object.values(errorData.errors).flat().join(', ') :
+                        errorData.message || 'Registration failed.';
+                } catch (e) {
+                    console.error("Non-JSON error response received:", await response.text());
+                }
+
                 alert(`Registration failed: ${errorMessage}`);
             }
         } catch (error) {
@@ -38,11 +48,11 @@ function Register({ onSwitchToLogin }) {
     };
 
     return (
-        <div style={{ maxWidth: '400px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '400px', margin: '0 auto', padding: '2rem', border: '1px solid #ddd', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
             <h2>Register</h2>
             <form onSubmit={handleSubmit}>
                 <div style={{ marginBottom: '1rem' }}>
-                    <label style={{ display: 'block', marginBottom: '0.5rem' }}>Username:</label>
+                    <label style={{ display: 'block', marginBottom: '0.5rem' }}>Username</label>
                     <input
                         type="text"
                         value={username}
@@ -52,7 +62,7 @@ function Register({ onSwitchToLogin }) {
                     />
                 </div>
                 <div style={{ marginBottom: '1rem' }}>
-                    <label style={{ display: 'block', marginBottom: '0.5rem' }}>Email:</label>
+                    <label style={{ display: 'block', marginBottom: '0.5rem' }}>Email</label>
                     <input
                         type="email"
                         value={email}
@@ -62,7 +72,7 @@ function Register({ onSwitchToLogin }) {
                     />
                 </div>
                 <div style={{ marginBottom: '1rem' }}>
-                    <label style={{ display: 'block', marginBottom: '0.5rem' }}>Password:</label>
+                    <label style={{ display: 'block', marginBottom: '0.5rem' }}>Password</label>
                     <input
                         type="password"
                         value={password}

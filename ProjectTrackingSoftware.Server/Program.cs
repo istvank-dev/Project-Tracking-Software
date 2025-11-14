@@ -12,12 +12,21 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
 
 // Configure Identity
-builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
+builder.Services.AddIdentityApiEndpoints<ApplicationUser>(options =>
 {
     options.User.RequireUniqueEmail = true;
     options.SignIn.RequireConfirmedAccount = false;
 })
-.AddEntityFrameworkStores<ApplicationDbContext>();
+.AddEntityFrameworkStores<ApplicationDbContext>()
+// FIX: Configure the cookie for cross-site/cross-port development
+.Services.ConfigureApplicationCookie(options =>
+{
+    // Setting SameSite=None and Secure=true is necessary for cookies 
+    // to be sent in modern browsers during cross-site requests, 
+    // which includes different ports on localhost.
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
 
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();

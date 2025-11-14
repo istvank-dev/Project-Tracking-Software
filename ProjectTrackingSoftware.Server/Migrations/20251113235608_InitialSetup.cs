@@ -175,45 +175,8 @@ namespace ProjectTrackingSoftware.Server.Migrations
                         name: "FK_Projects_AspNetUsers_OwnerId",
                         column: x => x.OwnerId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "KanbanBoards",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    ProjectId = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_KanbanBoards", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_KanbanBoards_Projects_ProjectId",
-                        column: x => x.ProjectId,
-                        principalTable: "Projects",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "NoteModules",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    ProjectId = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_NoteModules", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_NoteModules_Projects_ProjectId",
-                        column: x => x.ProjectId,
-                        principalTable: "Projects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -232,99 +195,11 @@ namespace ProjectTrackingSoftware.Server.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ProjectMembers_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "KanbanColumns",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Title = table.Column<string>(type: "TEXT", nullable: false),
-                    SortOrder = table.Column<double>(type: "REAL", nullable: false),
-                    BackgroundColor = table.Column<string>(type: "TEXT", nullable: false),
-                    TextColor = table.Column<string>(type: "TEXT", nullable: false),
-                    BoardId = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_KanbanColumns", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_KanbanColumns_KanbanBoards_BoardId",
-                        column: x => x.BoardId,
-                        principalTable: "KanbanBoards",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "NoteEntries",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Title = table.Column<string>(type: "TEXT", nullable: false),
-                    Description = table.Column<string>(type: "TEXT", nullable: false),
-                    BackgroundColor = table.Column<string>(type: "TEXT", nullable: false),
-                    TextColor = table.Column<string>(type: "TEXT", nullable: false),
-                    NoteModuleId = table.Column<int>(type: "INTEGER", nullable: false),
-                    OwnerUserId = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_NoteEntries", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_NoteEntries_AspNetUsers_OwnerUserId",
-                        column: x => x.OwnerUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_NoteEntries_NoteModules_NoteModuleId",
-                        column: x => x.NoteModuleId,
-                        principalTable: "NoteModules",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "KanbanTickets",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Title = table.Column<string>(type: "TEXT", nullable: false),
-                    Description = table.Column<string>(type: "TEXT", nullable: false),
-                    SortOrder = table.Column<double>(type: "REAL", nullable: false),
-                    BackgroundColor = table.Column<string>(type: "TEXT", nullable: false),
-                    TextColor = table.Column<string>(type: "TEXT", nullable: false),
-                    ColumnId = table.Column<int>(type: "INTEGER", nullable: false),
-                    OwnerUserId = table.Column<string>(type: "TEXT", nullable: false),
-                    AssigneeId = table.Column<string>(type: "TEXT", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_KanbanTickets", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_KanbanTickets_AspNetUsers_AssigneeId",
-                        column: x => x.AssigneeId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_KanbanTickets_AspNetUsers_OwnerUserId",
-                        column: x => x.OwnerUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_KanbanTickets_KanbanColumns_ColumnId",
-                        column: x => x.ColumnId,
-                        principalTable: "KanbanColumns",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -367,48 +242,6 @@ namespace ProjectTrackingSoftware.Server.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_KanbanBoards_ProjectId",
-                table: "KanbanBoards",
-                column: "ProjectId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_KanbanColumns_BoardId",
-                table: "KanbanColumns",
-                column: "BoardId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_KanbanTickets_AssigneeId",
-                table: "KanbanTickets",
-                column: "AssigneeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_KanbanTickets_ColumnId",
-                table: "KanbanTickets",
-                column: "ColumnId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_KanbanTickets_OwnerUserId",
-                table: "KanbanTickets",
-                column: "OwnerUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_NoteEntries_NoteModuleId",
-                table: "NoteEntries",
-                column: "NoteModuleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_NoteEntries_OwnerUserId",
-                table: "NoteEntries",
-                column: "OwnerUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_NoteModules_ProjectId",
-                table: "NoteModules",
-                column: "ProjectId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ProjectMembers_UserId",
                 table: "ProjectMembers",
                 column: "UserId");
@@ -438,25 +271,10 @@ namespace ProjectTrackingSoftware.Server.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "KanbanTickets");
-
-            migrationBuilder.DropTable(
-                name: "NoteEntries");
-
-            migrationBuilder.DropTable(
                 name: "ProjectMembers");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "KanbanColumns");
-
-            migrationBuilder.DropTable(
-                name: "NoteModules");
-
-            migrationBuilder.DropTable(
-                name: "KanbanBoards");
 
             migrationBuilder.DropTable(
                 name: "Projects");
